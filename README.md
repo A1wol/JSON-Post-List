@@ -1,4 +1,4 @@
-# jsonlist
+# JSON Post List with pagination
 
 ## Project setup
 ```
