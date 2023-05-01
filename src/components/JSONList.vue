@@ -1,20 +1,10 @@
 <template>
   <div class="json-list">
-    <ListPagination
-      v-model="currentUserID"
-      :isPrevButtonVisible="firstIndex >= 10"
-      :isNextButtonVisible="lastIndex <= typicodeDataLength - 10"
-      :options="selectOptions"
-      :userID="currentUserID"
-      @prev="decrementSliceIndexes"
-      @next="incrementSliceIndexes"
-    />
+    <ListPagination v-model="currentUserID" :isPrevButtonVisible="firstIndex >= 10"
+      :isNextButtonVisible="lastIndex <= typicodeDataLength - 10" :options="selectOptions" :userID="currentUserID"
+      @prev="decrementSliceIndexes" @next="incrementSliceIndexes" />
     <div class="json-list__list">
-      <div
-        v-for="element in filteredTypicodeData"
-        :key="element.id"
-        class="json-list__element"
-      >
+      <div v-for="element in filteredTypicodeData" :key="element.id" class="json-list__element">
         <div class="json-list__id">
           {{ element.userId }}
         </div>
@@ -33,39 +23,46 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import ListPagination from "./ListPagination.vue";
+const isDataFetched = ref(false)
+const typicodeData = ref();
 const typicodeDataLength = ref();
 const filteredTypicodeData = ref();
 const selectOptions = ref();
 const firstIndex = ref(0);
 const currentUserID = ref(1);
 const lastIndex = ref(9);
-async function getDataFromTypicode() {
+
+function getDataFromTypicode() {
   try {
     fetch("https://jsonplaceholder.typicode.com/posts")
       .then((response) => response.json())
       .then((json) => {
-        typicodeDataLength.value = json.length;
-        filteredTypicodeData.value = json.slice(
-          firstIndex.value,
-          lastIndex.value
-        );
-        selectOptions.value = Array.from(
-          { length: json.length / 10 },
-          (_, i) => i + 1
-        );
-        sortDataTitlesAlphabetically(filteredTypicodeData.value);
-        localStorage.setItem("typicodeData", JSON.stringify(json));
+        typicodeData.value = json;
+        isDataFetched.value = true;
       });
   } catch (error) {
     console.error(error);
   }
+}
+function filterTypicodeData() {
+  filteredTypicodeData.value = typicodeData.value.slice(
+    firstIndex.value,
+    lastIndex.value
+  );
+  sortDataTitlesAlphabetically(filteredTypicodeData.value);
+}
+function getSelectOptions() {
+  selectOptions.value = Array.from(
+    { length: typicodeDataLength.value / 10 },
+    (_, i) => i + 1
+  );
 }
 function decrementSliceIndexes() {
   if (firstIndex.value >= 10) {
     firstIndex.value -= 10;
     lastIndex.value -= 10;
     currentUserID.value--;
-    getDataFromTypicode();
+    filterTypicodeData();
   }
 }
 function incrementSliceIndexes() {
@@ -73,24 +70,32 @@ function incrementSliceIndexes() {
     firstIndex.value += 10;
     lastIndex.value += 10;
     currentUserID.value++;
-    getDataFromTypicode();
+    filterTypicodeData();
   }
 }
 function sortDataTitlesAlphabetically(data) {
-  data.sort(function (a, b) {
-    if (a.title < b.title) {
-      return -1;
-    }
-    if (a.title > b.title) {
-      return 1;
-    }
-    return 0;
-  });
+  if (data) {
+    data.sort(function (a, b) {
+      if (a.title < b.title) {
+        return -1;
+      }
+      if (a.title > b.title) {
+        return 1;
+      }
+      return 0;
+    });
+  }
 }
+watch(isDataFetched, () => {
+  filterTypicodeData();
+  typicodeDataLength.value = typicodeData.value.length;
+  getSelectOptions();
+  localStorage.setItem("typicodeData", JSON.stringify(typicodeData.value));
+})
 watch(currentUserID, () => {
   firstIndex.value = currentUserID.value * 10 - 10;
   lastIndex.value = currentUserID.value * 10 - 1;
-  getDataFromTypicode();
+  filterTypicodeData()
 });
 onMounted(() => {
   getDataFromTypicode();
