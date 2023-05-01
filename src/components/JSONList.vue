@@ -1,10 +1,20 @@
 <template>
   <div class="json-list">
-    <ListPagination v-model="currentUserID" :isPrevButtonVisible="firstIndex >= 10"
-      :isNextButtonVisible="lastIndex <= typicodeDataLength - 10" :options="selectOptions" :userID="currentUserID"
-      @prev="decrementSliceIndexes" @next="incrementSliceIndexes" />
+    <ListPagination
+      v-model="currentUserID"
+      :isPrevButtonVisible="firstIndex >= 10"
+      :isNextButtonVisible="lastIndex <= typicodeDataLength - 10"
+      :options="selectOptions"
+      :userID="currentUserID"
+      @prev="decrementSliceIndexes"
+      @next="incrementSliceIndexes"
+    />
     <div class="json-list__list">
-      <div v-for="element in filteredTypicodeData" :key="element.id" class="json-list__element">
+      <div
+        v-for="element in filteredTypicodeData"
+        :key="element.id"
+        class="json-list__element"
+      >
         <div class="json-list__id">
           {{ element.userId }}
         </div>
@@ -23,7 +33,7 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import ListPagination from "./ListPagination.vue";
-const isDataFetched = ref(false)
+const isDataFetched = ref(false);
 const typicodeData = ref();
 const typicodeDataLength = ref();
 const filteredTypicodeData = ref();
@@ -91,11 +101,11 @@ watch(isDataFetched, () => {
   typicodeDataLength.value = typicodeData.value.length;
   getSelectOptions();
   localStorage.setItem("typicodeData", JSON.stringify(typicodeData.value));
-})
+});
 watch(currentUserID, () => {
   firstIndex.value = currentUserID.value * 10 - 10;
   lastIndex.value = currentUserID.value * 10 - 1;
-  filterTypicodeData()
+  filterTypicodeData();
 });
 onMounted(() => {
   getDataFromTypicode();
