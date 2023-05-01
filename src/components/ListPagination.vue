@@ -5,21 +5,14 @@
       <img :src="listBox" />
     </div>
     <div class="list-pagination__pagination">
-      <div
-        class="list-pagination__arrow"
-        :class="[
+      <div class="list-pagination__arrow" :class="[
           isPrevButtonVisible ? '' : 'list-pagination__arrow--invisible',
-        ]"
-        @click="emit('prev')"
-      >
+        ]" @click="emit('prev')">
         <img :src="pagePrev" />
         <div>Previous</div>
       </div>
       <div class="list-pagination__current-userid">
-        <select
-          :value="modelValue"
-          @change="$emit('update:modelValue', $event.target.value)"
-        >
+        <select :value="modelValue" @change="$emit('update:modelValue', $event.target.value)">
           <option disabled>{{ props.userID }}</option>
           <option v-for="option in options" :value="option" :key="option.id">
             {{ option }}
@@ -27,13 +20,9 @@
         </select>
         <div class="select_arrow"></div>
       </div>
-      <div
-        class="list-pagination__arrow"
-        :class="[
+      <div class="list-pagination__arrow" :class="[
           isNextButtonVisible ? '' : 'list-pagination__arrow--invisible',
-        ]"
-        @click="emit('next')"
-      >
+        ]" @click="emit('next')">
         <img :src="pageNext" />
         <div>Next</div>
       </div>
@@ -118,20 +107,8 @@ const props = defineProps([
 
 @media (max-width: 600px) {
   .list-pagination {
-    &__title {
-      font-size: 22px;
-    }
-
-    &__arrow {
-      min-width: 70px;
-    }
-  }
-}
-
-@media (max-width: 400px) {
-  .list-pagination {
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
   }
 }
 </style>
