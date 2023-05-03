@@ -1,5 +1,8 @@
 # JSON Post List with pagination
 
+Project now available hosted on GH Pages: https://a1wol.github.io/JSON-Post-List/
+Check it if you want to.
+
 ## Project setup
 ```
 npm install
